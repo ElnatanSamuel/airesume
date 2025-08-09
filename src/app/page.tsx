@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Home() {
   const [form, setForm] = useState({
@@ -17,11 +19,7 @@ export default function Home() {
     company: "",
     department: "",
   });
-  const [skillsTags, setSkillsTags] = useState<string[]>([
-    "UI/UX",
-    "Data Analytics",
-    "Design",
-  ]);
+  const [skillsTags, setSkillsTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -101,6 +99,8 @@ export default function Home() {
   };
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <div className="h-screen w-full bg-white text-black flex">
@@ -120,11 +120,11 @@ export default function Home() {
             <div className="flex items-center gap-18 justify-between">
               <div className="flex items-center gap-2">
                 <img src="/logo.svg" alt="Logo" className="h-7 w-7" />
-                <span className="font-semibold">Writify</span>
+                <span className="font-semibold">Sync</span>
               </div>
               <button
                 onClick={() => setSidebarOpen((v) => !v)}
-                className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-black  text-white hover:bg-black/85"
+                className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-blue-500/[.1] text-blue-500 hover:bg-black/85"
                 title="Collapse sidebar"
                 aria-label="Collapse sidebar"
               >
@@ -143,7 +143,7 @@ export default function Home() {
           ) : (
             <button
               onClick={() => setSidebarOpen((v) => !v)}
-              className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-black text-white hover:bg-black/85"
+              className="inline-flex items-center justify-center h-9 w-9 rounded-lg bg-blue-500/[.1] text-blue-500 hover:bg-black/85"
               title="Expand sidebar"
               aria-label="Expand sidebar"
             >
@@ -164,56 +164,80 @@ export default function Home() {
         {sidebarOpen ? (
           <nav className="p-3 space-y-2">
             {[
-              { label: "Cover Letters", key: "cover", active: true },
-              { label: "Resumes", key: "resumes", active: false },
+              {
+                label: "Cover Letters",
+                key: "cover",
+                href: "/",
+                active: pathname === "/",
+              },
+              {
+                label: "Resumes",
+                key: "resumes",
+                href: "/resumes",
+                active: pathname?.startsWith("/resumes"),
+              },
             ].map((item) => (
-              <button
-                key={item.key}
-                className={`w-full flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                  item.active ? "bg-black text-white" : "hover:bg-black/[.05]"
-                }`}
-                title={item.label}
-                aria-label={item.label}
-              >
-                {/* Icon */}
-                {item.key === "cover" ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="h-5 w-5"
-                  >
-                    <rect x="3" y="6" width="18" height="12" rx="2" ry="2" />
-                    <path d="M3 8l9 6 9-6" />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    className="h-5 w-5"
-                  >
-                    <path d="M7 3h8l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
-                    <path d="M15 3v4h4" />
-                  </svg>
-                )}
-                <span>{item.label}</span>
-              </button>
+              <Link href={item.href} key={item.key}>
+                <button
+                  className={`w-full flex items-center gap-2 text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                    item.active
+                      ? "bg-blue-500/[.1] text-blue-500"
+                      : "hover:bg-black/[.05]"
+                  }`}
+                  title={item.label}
+                  aria-label={item.label}
+                >
+                  {/* Icon */}
+                  {item.key === "cover" ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="h-5 w-5"
+                    >
+                      <rect x="3" y="6" width="18" height="12" rx="2" ry="2" />
+                      <path d="M3 8l9 6 9-6" />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      className="h-5 w-5"
+                    >
+                      <path d="M7 3h8l4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+                      <path d="M15 3v4h4" />
+                    </svg>
+                  )}
+                  <span>{item.label}</span>
+                </button>
+              </Link>
             ))}
           </nav>
         ) : (
           <nav className="p-2 space-y-2 flex flex-col items-center">
             {[
-              { key: "cover", active: true, label: "Cover Letters" },
-              { key: "resumes", active: false, label: "Resumes" },
+              {
+                key: "cover",
+                label: "Cover Letters",
+                href: "/",
+                active: pathname === "/",
+              },
+              {
+                key: "resumes",
+                label: "Resumes",
+                href: "/resumes",
+                active: pathname?.startsWith("/resumes"),
+              },
             ].map((item) => (
               <button
                 key={item.key}
                 title={item.label}
+                onClick={() => router.push(item.href)}
                 className={`w-9 h-9 inline-flex items-center justify-center rounded-lg text-sm ${
                   item.active ? "bg-black text-white" : "hover:bg-black/[.05]"
                 }`}
@@ -251,16 +275,16 @@ export default function Home() {
       </aside>
 
       {/* Main area */}
-      <div className="flex-1 overflow-hidden mt-6">
+      <div className="flex-1 overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 p-0">
           {/* Main form */}
           <main
             className={
               (sidebarOpen ? "lg:col-span-7 " : "lg:col-span-7 ") +
-              "h-[calc(100vh-2rem)] overflow-auto pr-1"
+              "h-[calc(100vh-2rem)] overflow-auto pr-1 bg-gray-50"
             }
           >
-            <h1 className="text-xl font-semibold mb-3 px-4">
+            <h1 className="text-xl font-semibold mb-3 px-4 pt-6">
               Generate your cover letter
             </h1>
             <form onSubmit={handleSubmit} className="px-4">
@@ -475,11 +499,11 @@ export default function Home() {
               </div>
 
               {error && <div className="text-red-600 text-sm">{error}</div>}
-              <div className="sticky pt-4 bottom-0 left-0 right-0 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-t border-black/10  py-3">
+              <div className="sticky bottom-0 left-0 right-0 border-t border-black/10">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-lg bg-black text-white py-3 font-medium hover:bg-black/85 disabled:opacity-60"
+                  className="w-full rounded-lg bg-blue-500/[.1] text-blue-500 py-3 font-medium hover:bg-black/85 disabled:opacity-60"
                 >
                   {loading ? "Generating..." : "Generate"}
                 </button>
@@ -489,16 +513,16 @@ export default function Home() {
 
           {/* Right preview/result */}
           <aside className={sidebarOpen ? "lg:col-span-5" : "lg:col-span-5"}>
-            <div className="sticky top-4 h-[calc(100vh-5rem)] px-4">
+            <div className="sticky h-[calc(100vh-5rem)] px-4 overflow-auto bg-gray-50">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <h2 className="text-base font-medium">Preview</h2>
+                  <h2 className="text-base font-medium pt-6">Preview</h2>
                 </div>
                 <div className="flex items-center gap-2">
                   {result && (
                     <button
                       onClick={copyToClipboard}
-                      className="h-8 px-2.5 inline-flex items-center justify-center text-xs rounded-md border border-black/[.12] hover:bg-black/[.05]"
+                      className="h-8 px-2.5 inline-flex items-center justify-center text-xs rounded-md border border-indigo-200 text-indigo-700 hover:bg-indigo-50"
                     >
                       Copy
                     </button>
@@ -512,20 +536,20 @@ export default function Home() {
                     {result}
                   </div>
                 ) : (
-                  <div className="py-16 flex flex-col items-center text-center">
-                    <div className="mb-6 rounded-2xl p-4 bg-gradient-to-b from-indigo-50 to-white shadow-[0_8px_30px_rgba(99,102,241,0.25)]">
+                  <div className="h-full flex items-center justify-center">
+                    <div className="text-center">
                       <img
                         src="/logo.svg"
                         alt="Preview icon"
-                        className="h-16 w-16"
+                        className="h-16 w-16 mx-auto"
                       />
-                    </div>
-                    <div className="text-lg font-semibold mb-1">
-                      Answer the prompts
-                    </div>
-                    <div className="text-sm text-black/60">
-                      Get the best preview results by filling in several inputs
-                      on the left.
+                      <div className="text-lg font-semibold mb-1">
+                        Answer the prompts
+                      </div>
+                      <div className="text-sm text-black/60">
+                        Get the best preview results by filling in several
+                        inputs on the left.
+                      </div>
                     </div>
                   </div>
                 )}
@@ -536,7 +560,7 @@ export default function Home() {
       </div>
       {toast.show && (
         <div
-          className="fixed bottom-4 right-4 z-50 rounded-md bg-black text-white text-sm px-3 py-2 shadow-lg"
+          className="fixed bottom-4 right-4 z-50 rounded-md bg-blue-500/[.1] text-blue-500 text-sm px-3 py-2 shadow-lg"
           role="status"
           aria-live="polite"
         >

@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-lato);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -22,5 +22,42 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-lato), ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, Noto Sans, "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+}
+
+/* Subtle grid + lines background overlay */
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  /* layered background: big radial glow, fine grid, bold lines */
+  background-image:
+    radial-gradient(1200px 800px at 80% -10%, rgba(0,0,0,0.04), transparent 60%),
+    radial-gradient(1000px 700px at 10% 110%, rgba(0,0,0,0.035), transparent 60%),
+    /* fine grid */
+    repeating-linear-gradient(0deg, rgba(0,0,0,0.035) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.035) 0 1px, transparent 1px 28px),
+    /* bold lines every 5 cells */
+    repeating-linear-gradient(0deg, transparent 0 140px, rgba(0,0,0,0.05) 140px 141px),
+    repeating-linear-gradient(90deg, transparent 0 140px, rgba(0,0,0,0.05) 140px 141px);
+  background-position: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  html::before {
+    background-image:
+      radial-gradient(1200px 800px at 80% -10%, rgba(255,255,255,0.06), transparent 60%),
+      radial-gradient(1000px 700px at 10% 110%, rgba(255,255,255,0.05), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 28px),
+      repeating-linear-gradient(0deg, transparent 0 140px, rgba(255,255,255,0.08) 140px 141px),
+      repeating-linear-gradient(90deg, transparent 0 140px, rgba(255,255,255,0.08) 140px 141px);
+  }
+}
+
+/* Hide decorative background in print/PDF */
+@media print {
+  html::before { display: none; }
 }
