@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -119,7 +120,7 @@ export default function Home() {
           {sidebarOpen ? (
             <div className="flex items-center gap-18 justify-between">
               <div className="flex items-center gap-2">
-                <img src="/logo.svg" alt="Logo" className="h-7 w-7" />
+                <Image src="/logo.svg" alt="Logo" width={28} height={28} className="h-7 w-7" />
                 <span className="font-semibold">Sync</span>
               </div>
               <button
@@ -538,9 +539,11 @@ export default function Home() {
                 ) : (
                   <div className="h-full flex items-center justify-center">
                     <div className="text-center">
-                      <img
+                      <Image
                         src="/logo.svg"
                         alt="Preview icon"
+                        width={64}
+                        height={64}
                         className="h-16 w-16 mx-auto"
                       />
                       <div className="text-lg font-semibold mb-1">

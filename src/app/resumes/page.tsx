@@ -3,6 +3,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function ResumePage() {
   const [jobDescription, setJobDescription] = useState("");
@@ -270,7 +271,7 @@ export default function ResumePage() {
       let from = "";
       let to = "";
       let location: string | undefined;
-      let fieldIdx = parts.findIndex((p) => /\([^)]*\)/.test(p));
+      const fieldIdx = parts.findIndex((p) => /\([^)]*\)/.test(p));
       if (fieldIdx >= 0) {
         const m = parts[fieldIdx].match(/^(.*?)\s*\(([^)]*)\)\s*$/);
         if (m) {
@@ -500,17 +501,7 @@ export default function ResumePage() {
     ].join("\n");
   };
 
-  const copyToClipboard = async () => {
-    if (!result) return;
-    try {
-      await navigator.clipboard.writeText(result);
-      setToast({ show: true, message: "Copied to clipboard" });
-    } catch {
-      setToast({ show: true, message: "Failed to copy" });
-    } finally {
-      setTimeout(() => setToast((t) => ({ ...t, show: false })), 1800);
-    }
-  };
+  // copyToClipboard (unused in this page) removed to satisfy lint
 
   // Minimal markdown to HTML (headings, bold, lists, paragraphs)
   const mdToHtml = (md: string): string => {
@@ -558,7 +549,7 @@ export default function ResumePage() {
       }
     };
 
-    for (let raw of lines) {
+    for (const raw of lines) {
       const line = raw.trimEnd();
       if (!line.trim()) {
         flushUl();
@@ -781,7 +772,7 @@ export default function ResumePage() {
           {sidebarOpen ? (
             <div className="flex items-center gap-18 justify-between w-full">
               <div className="flex items-center gap-2">
-                <img src="/logo.svg" alt="Logo" className="h-7 w-7" />
+                <Image src="/logo.svg" alt="Logo" width={28} height={28} className="h-7 w-7" />
                 <span className="font-semibold">Sync</span>
               </div>
               <button
@@ -1116,13 +1107,13 @@ export default function ResumePage() {
                       />
                       <input
                         placeholder="Position"
-                        value={(it as any).position || ""}
+                        value={it.position}
                         onChange={(e) => {
                           const arr = [...experienceItems];
                           arr[idx] = {
                             ...arr[idx],
                             position: e.target.value,
-                          } as any;
+                          };
                           setExperienceItems(arr);
                         }}
                         className="rounded-md border border-black/[.12] bg-white px-3 py-2"
@@ -1130,26 +1121,26 @@ export default function ResumePage() {
                       <div className="grid grid-cols-2 gap-3 sm:col-span-2">
                         <input
                           placeholder="From (e.g., Jun 2025)"
-                          value={(it as any).from || ""}
+                          value={it.from}
                           onChange={(e) => {
                             const arr = [...experienceItems];
                             arr[idx] = {
                               ...arr[idx],
                               from: toMonYYYY(e.target.value),
-                            } as any;
+                            };
                             setExperienceItems(arr);
                           }}
                           className="rounded-md border border-black/[.12] bg-white px-3 py-2"
                         />
                         <input
                           placeholder="To (e.g., Aug 2025 or Present)"
-                          value={(it as any).to || ""}
+                          value={it.to}
                           onChange={(e) => {
                             const arr = [...experienceItems];
                             arr[idx] = {
                               ...arr[idx],
                               to: toMonYYYY(e.target.value),
-                            } as any;
+                            };
                             setExperienceItems(arr);
                           }}
                           className="rounded-md border border-black/[.12] bg-white px-3 py-2"
@@ -1229,26 +1220,26 @@ export default function ResumePage() {
                     >
                       <input
                         placeholder="Institution"
-                        value={(it as any).institution || ""}
+                        value={it.institution}
                         onChange={(e) => {
                           const arr = [...educationItems];
                           arr[idx] = {
                             ...arr[idx],
                             institution: e.target.value,
-                          } as any;
+                          };
                           setEducationItems(arr);
                         }}
                         className="rounded-md border border-black/[.12] bg-white px-3 py-2"
                       />
                       <input
                         placeholder="Field of Study"
-                        value={(it as any).fieldOfStudy || ""}
+                        value={it.fieldOfStudy}
                         onChange={(e) => {
                           const arr = [...educationItems];
                           arr[idx] = {
                             ...arr[idx],
                             fieldOfStudy: e.target.value,
-                          } as any;
+                          };
                           setEducationItems(arr);
                         }}
                         className="rounded-md border border-black/[.12] bg-white px-3 py-2"
@@ -1256,26 +1247,26 @@ export default function ResumePage() {
                       <div className="grid grid-cols-2 gap-3 sm:col-span-2">
                         <input
                           placeholder="From (e.g., Sep 2020)"
-                          value={(it as any).from || ""}
+                          value={it.from}
                           onChange={(e) => {
                             const arr = [...educationItems];
                             arr[idx] = {
                               ...arr[idx],
                               from: toMonYYYY(e.target.value),
-                            } as any;
+                            };
                             setEducationItems(arr);
                           }}
                           className="rounded-md border border-black/[.12] bg-white px-3 py-2"
                         />
                         <input
                           placeholder="To (e.g., Jun 2024 or Present)"
-                          value={(it as any).to || ""}
+                          value={it.to}
                           onChange={(e) => {
                             const arr = [...educationItems];
                             arr[idx] = {
                               ...arr[idx],
                               to: toMonYYYY(e.target.value),
-                            } as any;
+                            };
                             setEducationItems(arr);
                           }}
                           className="rounded-md border border-black/[.12] bg-white px-3 py-2"
@@ -1446,9 +1437,11 @@ export default function ResumePage() {
                 ) : (
                   <div className="h-full flex items-center justify-center">
                     <div className="text-center">
-                      <img
+                      <Image
                         src="/logo.svg"
                         alt="Preview icon"
+                        width={64}
+                        height={64}
                         className="h-16 w-16 mx-auto"
                       />
                       <div className="text-lg font-semibold mb-1">
