@@ -61,11 +61,9 @@ export async function POST(req: NextRequest) {
     const output = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
     return NextResponse.json({ result: output });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message || "Unknown error" },
-      { status: 500 }
-    );
+  } catch (err: unknown) {
+    const message = typeof (err as any)?.message === "string" ? (err as any).message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

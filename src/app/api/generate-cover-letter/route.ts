@@ -63,16 +63,12 @@ export async function POST(req: Request) {
           const text = result.response.text();
           const content = (text || "").trim();
           if (content) return content;
-        } catch (e: any) {
-          lastErr = e;
+        } catch (e: unknown) {
+          lastErr = e as Error;
           // If 429 (rate limit/quota), try next model; otherwise break
-          if (
-            !(
-              e &&
-              (e.status === 429 ||
-                (typeof e.message === "string" && e.message.includes("429")))
-            )
-          ) {
+          const status = typeof (e as any)?.status === "number" ? (e as any).status : undefined;
+          const msg = typeof (e as any)?.message === "string" ? (e as any).message : undefined;
+          if (!(status === 429 || (typeof msg === "string" && msg.includes("429")))) {
             break;
           }
         }
@@ -102,12 +98,10 @@ export async function POST(req: Request) {
     try {
       // Lower temperature for extraction for more deterministic parsing
       extractionRaw = await tryGenerate(extractionPrompt, 0.2);
-    } catch (e: any) {
-      if (
-        e &&
-        (e.status === 429 ||
-          (typeof e.message === "string" && e.message.includes("429")))
-      ) {
+    } catch (e: unknown) {
+      const status = typeof (e as any)?.status === "number" ? (e as any).status : undefined;
+      const msg = typeof (e as any)?.message === "string" ? (e as any).message : undefined;
+      if (status === 429 || (typeof msg === "string" && msg.includes("429"))) {
         return NextResponse.json(
           {
             error:
@@ -116,7 +110,7 @@ export async function POST(req: Request) {
           { status: 429 }
         );
       }
-      throw e;
+      throw (e instanceof Error ? e : new Error("Extraction failed"));
     }
 
     // Try to parse JSON out of the extraction
@@ -186,12 +180,10 @@ export async function POST(req: Request) {
     let content = "";
     try {
       content = await tryGenerate(generationPrompt, creativity);
-    } catch (e: any) {
-      if (
-        e &&
-        (e.status === 429 ||
-          (typeof e.message === "string" && e.message.includes("429")))
-      ) {
+    } catch (e: unknown) {
+      const status = typeof (e as any)?.status === "number" ? (e as any).status : undefined;
+      const msg = typeof (e as any)?.message === "string" ? (e as any).message : undefined;
+      if (status === 429 || (typeof msg === "string" && msg.includes("429"))) {
         return NextResponse.json(
           {
             error:
@@ -200,7 +192,7 @@ export async function POST(req: Request) {
           { status: 429 }
         );
       }
-      throw e;
+      throw (e instanceof Error ? e : new Error("Generation failed"));
     }
 
     if (!content) {

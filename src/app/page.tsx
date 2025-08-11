@@ -80,8 +80,9 @@ export default function Home() {
           ? data.coverLetter
           : JSON.stringify(data.coverLetter)
       );
-    } catch (err: any) {
-      setError(err?.message || "Something went wrong");
+    } catch (err: unknown) {
+      const message = typeof (err as any)?.message === "string" ? (err as any).message : "Something went wrong";
+      setError(message);
     } finally {
       setLoading(false);
     }

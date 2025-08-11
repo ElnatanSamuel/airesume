@@ -22,8 +22,7 @@ export default function ResumePage() {
     socials: "",
   });
   const [summary, setSummary] = useState("");
-  const [experience, setExperience] = useState("");
-  const [education, setEducation] = useState("");
+  // Removed unused experience/education raw text state (handled via structured arrays)
   const [skills, setSkills] = useState("");
   const [certifications, setCertifications] = useState("");
   const [projects, setProjects] = useState("");
@@ -87,8 +86,9 @@ export default function ResumePage() {
         // If parsing fails, still show the raw result, keep editMode off
         setEditMode(false);
       }
-    } catch (err: any) {
-      setToast({ show: true, message: err?.message || "Generation failed" });
+    } catch (err: unknown) {
+      const message = typeof (err as any)?.message === "string" ? (err as any).message : "Generation failed";
+      setToast({ show: true, message });
       setTimeout(() => setToast({ show: false, message: "" }), 1800);
     } finally {
       setLoading(false);
@@ -198,7 +198,7 @@ export default function ResumePage() {
       let from = "";
       let to = "";
       let location: string | undefined;
-      let posIdx = parts.findIndex((p) => /\([^)]*\)/.test(p));
+      const posIdx = parts.findIndex((p) => /\([^)]*\)/.test(p));
       if (posIdx >= 0) {
         const m = parts[posIdx].match(/^(.*?)\s*\(([^)]*)\)\s*$/);
         if (m) {
@@ -259,7 +259,7 @@ export default function ResumePage() {
     }
     if (curExp) expItems.push({ ...curExp });
     setExperienceItems(expItems);
-    setExperience("");
+    
 
     // Parse Education into structured items: "- Institution — Field of Study (YYYY-MM – YYYY-MM) — Location"
     const eduText = getSection("Education");
@@ -336,7 +336,7 @@ export default function ResumePage() {
     }
     if (curEdu) eduItems.push({ ...curEdu });
     setEducationItems(eduItems);
-    setEducation("");
+    
     setSkills(getSection("Skills"));
     setCertifications(
       getSection("Certifications", ["Certifications(optional)"])
